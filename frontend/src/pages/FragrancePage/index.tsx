@@ -1,30 +1,7 @@
-
 import { useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import * as S from "./styles";
-
-interface FragranceData {
-    name: string;
-    brand: string;
-    image: string;
-    gender?: string;
-    rating?: {
-        value: number;
-        count: number;
-    };
-    accords?: {
-        name: string;
-        width: string;
-        background: string;
-        color: string;
-    }[];
-    brandLogo?: string;
-    notes?: {
-        top: { name: string; image: string }[];
-        middle: { name: string; image: string }[];
-        base: { name: string; image: string }[];
-    };
-    perfumers?: { name: string; image: string }[];
-}
+import type { FragranceData } from '../../types/fragrance';
 
 const renderRatingStars = (rating: number) => {
     const stars = [];
@@ -46,7 +23,23 @@ const renderRatingStars = (rating: number) => {
 
 const FragrancePage = () => {
     const location = useLocation();
-    const fragranceData = location.state?.fragranceData as FragranceData;
+    const [fragranceData, setFragranceData] = useState<FragranceData | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        if (location.state?.fragranceData) {
+            setFragranceData(location.state.fragranceData);
+        }
+        setIsLoading(false);
+    }, [location.state]);
+
+    if (isLoading) {
+        return (
+            <S.Container>
+                <S.Loading>Loading fragrance data...</S.Loading>
+            </S.Container>
+        );
+    }
 
     if (!fragranceData) {
         return (
@@ -61,38 +54,50 @@ const FragrancePage = () => {
         <S.Container>
             <S.Card>
                 <S.CardContent>
-                    <S.ImageContainer>
-                        <S.Image 
-                            src={fragranceData.image} 
-                            alt={fragranceData.name}
-                        />
-                         {fragranceData.brandLogo && (
-                            <S.BrandLogo 
-                                src={fragranceData.brandLogo} 
-                                alt={fragranceData.brand}
-                            />
-                        )}
-                    </S.ImageContainer>
-                    <S.DetailsContainer>
-                        <S.Brand>{fragranceData.brand}</S.Brand>
-                        <S.Name>{fragranceData.name}</S.Name>
-                        {fragranceData.gender && (
-                            <S.Gender>For {fragranceData.gender}</S.Gender>
-                        )}
+                    <S.MainContentContainer>
+                        <S.NameBrandGenderContainerOuter>
+                            <S.NameBrandGenderContainerInner>
+                            <S.Brand>{fragranceData.brand}</S.Brand>
+                            <S.NameGenderContainer>
+                                <S.Name>{fragranceData.name}</S.Name>
+                                {fragranceData.gender && (
+                                    <S.GenderIndicator 
+                                    $type={fragranceData.gender}
+                                    title={fragranceData.gender === 'men' ? 'For Men' : fragranceData.gender === 'women' ? 'For Women' : 'Unisex'}    
+                                    >
+                                        {fragranceData.gender === 'men' ? 'M' : 
+                                        fragranceData.gender === 'women' ? 'W' : 'U'}
+                                    </S.GenderIndicator>
+                                )}
+                            </S.NameGenderContainer>
 
-                        {fragranceData.rating && (
-                            <S.RatingContainer>
-                                <S.RatingValue>{fragranceData.rating.value.toFixed(1)}</S.RatingValue>
-                                <S.StarsContainer>
-                                    {renderRatingStars(fragranceData.rating.value)}
-                                </S.StarsContainer>
-                                <S.RatingCount>({fragranceData.rating.count.toLocaleString()} ratings)</S.RatingCount>
-                            </S.RatingContainer>
-                        )}
+                            {fragranceData.rating && (
+                                <S.RatingContainer>
+                                    <S.RatingValue>{fragranceData.rating.value.toFixed(1)}</S.RatingValue>
+                                    <S.StarsContainer>
+                                        {renderRatingStars(fragranceData.rating.value)}
+                                    </S.StarsContainer>
+                                    <S.RatingCount>({fragranceData.rating.count.toLocaleString()} ratings)</S.RatingCount>
+                                </S.RatingContainer>
+                            )}
+                        </S.NameBrandGenderContainerInner>
+                        </S.NameBrandGenderContainerOuter>
+                        <S.DetailsColumn>
+                            <S.ImageColumn>
+                                <S.Image 
+                                    src={fragranceData.image} 
+                                    alt={fragranceData.name}
+                                />
+                                {fragranceData.brandLogo && (
+                                    <S.BrandLogo 
+                                        src={fragranceData.brandLogo} 
+                                        alt={fragranceData.brand}
+                                    />
+                                )}
+                        </S.ImageColumn>
 
-                           
                         {fragranceData.accords && fragranceData.accords.length > 0 && (
-                            <S.AccordsContainer>
+                            <S.AccordsColumn>
                                 <S.SectionTitle>Accords</S.SectionTitle>
                                 <S.AccordsGrid>
                                     {fragranceData.accords.map((accord, index) => (
@@ -106,12 +111,12 @@ const FragrancePage = () => {
                                         </S.AccordItem>
                                     ))}
                                 </S.AccordsGrid>
-                            </S.AccordsContainer>
+                            </S.AccordsColumn>
                         )}
 
                         {fragranceData.notes && (
-                            <S.NotesContainer>
-                                <S.SectionTitle>Note Breakdown</S.SectionTitle>
+                            <S.NotesColumn>
+                                <S.NotesSectionTitle >Note Breakdown</S.NotesSectionTitle >
                                 
                                 {fragranceData.notes.top.length > 0 && (
                                     <>
@@ -127,41 +132,49 @@ const FragrancePage = () => {
                                     </>
                                 )}
 
-                                {fragranceData.notes?.middle && fragranceData.notes.middle.length > 0 && (
+                                {fragranceData.notes.middle && fragranceData.notes.middle.length > 0 && (
                                     <>
-                                    <S.NoteType>Middle Notes</S.NoteType>
-                                    <S.NotesGrid>
-                                        {fragranceData.notes.middle.map((note, index) => (
-                                        <S.NoteItem key={`middle-${index}`}>
-                                            <S.NoteImage src={note.image} alt={note.name} />
-                                            <S.NoteName>{note.name}</S.NoteName>
-                                        </S.NoteItem>
-                                        ))}
-                                    </S.NotesGrid>
+                                        <S.NoteType>Middle Notes</S.NoteType>
+                                        <S.NotesGrid>
+                                            {fragranceData.notes.middle.map((note, index) => (
+                                                <S.NoteItem key={`middle-${index}`}>
+                                                    <S.NoteImage src={note.image} alt={note.name} />
+                                                    <S.NoteName>{note.name}</S.NoteName>
+                                                </S.NoteItem>
+                                            ))}
+                                        </S.NotesGrid>
                                     </>
                                 )}
 
-                                {fragranceData.notes?.base && fragranceData.notes.base.length > 0 && (
-                                <>
-                                <S.NoteType>Base Notes</S.NoteType>
-                                <S.NotesGrid>
-                                    {fragranceData.notes.base.map((note, index) => (
-                                    <S.NoteItem key={`base-${index}`}>
-                                        <S.NoteImage src={note.image} alt={note.name} />
-                                        <S.NoteName>{note.name}</S.NoteName>
-                                    </S.NoteItem>
-                                    ))}
-                                </S.NotesGrid>
-                                    </>
+                                {fragranceData.notes.base && fragranceData.notes.base.length > 0 && (
+                                    <>
+                                        <S.NoteType>Base Notes</S.NoteType>
+                                        <S.NotesGrid>
+                                            {fragranceData.notes.base.map((note, index) => (
+                                                <S.NoteItem key={`base-${index}`}>
+                                                    <S.NoteImage src={note.image} alt={note.name} />
+                                                    <S.NoteName>{note.name}</S.NoteName>
+                                                </S.NoteItem>
+                                            ))}
+                                        </S.NotesGrid>
+                                    </> 
                                 )}
-                            </S.NotesContainer>
+                            </S.NotesColumn>
                         )}
+                        </S.DetailsColumn>
 
                         
 
-                        {fragranceData.perfumers && fragranceData.perfumers.length > 0 && (
-                            <S.PerfumersContainer>
-                                <S.SectionTitle>Perfumers</S.SectionTitle>
+                        {/* Notes Column */}
+                        
+                    </S.MainContentContainer>
+
+                    {fragranceData.perfumers && fragranceData.perfumers.length > 0 && (
+                        <S.PerfumersContainer>
+                            <S.PerfumersContainerInner>
+                            <S.PerfumerTitleBG>
+                                <S.PerfumerSectionTitle>Perfumers</S.PerfumerSectionTitle>
+                            </S.PerfumerTitleBG>   
                                 <S.PerfumersGrid>
                                     {fragranceData.perfumers.map((perfumer, index) => (
                                         <S.PerfumerItem key={index}>
@@ -170,9 +183,9 @@ const FragrancePage = () => {
                                         </S.PerfumerItem>
                                     ))}
                                 </S.PerfumersGrid>
-                            </S.PerfumersContainer>
-                        )}
-                    </S.DetailsContainer>
+                            </S.PerfumersContainerInner>
+                        </S.PerfumersContainer>
+                    )}
                 </S.CardContent>
             </S.Card>
         </S.Container>

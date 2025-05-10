@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   max-width: 28rem;
-  margin: 0 auto;
+  margin: 120px auto;
   padding: 1rem;
 `;
 
@@ -27,12 +27,13 @@ export const FormGroup = styled.div`
 export const Label = styled.label`
   font-size: 0.875rem;
   font-weight: 500;
+  font-family: sans-serif;
   color: #374151;
   margin-bottom: 0.25rem;
 `;
 
 export const Input = styled.input`
-  width: 100%;
+  width: 92%;
   padding: 0.5rem 1rem;
   border: 1px solid #d1d5db;
   border-radius: 0.375rem;
@@ -43,6 +44,15 @@ export const Input = styled.input`
     border-color: #3b82f6;
     box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
   }
+`;
+
+export const FindMyFragImgWrapper = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    img {
+        max-width: 450px;
+    }
 `;
 
 export const ErrorText = styled.p`

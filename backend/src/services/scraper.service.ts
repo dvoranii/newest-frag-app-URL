@@ -1,29 +1,8 @@
-// /src/services/scraper.service.ts
-import * as Puppeteer from "puppeteer";
 
-interface FragranceData {
-    name: string;
-    brand: string;
-    image: string;
-    gender?: string;
-    rating?: {
-        value: number;
-        count: number;
-    };
-    accords?: {
-        name: string;
-        width: string;
-        background: string;
-        color: string;
-    }[];
-    brandLogo?: string;
-    notes?: {
-        top: { name: string; image: string }[];
-        middle: { name: string; image: string }[];
-        base: { name: string; image: string }[];
-    };
-    perfumers?: { name: string; image: string }[];
-}
+import * as Puppeteer from "puppeteer";
+import { FragranceData } from "../types/fragrance";
+
+
 
 class ScraperService {
     private browser: Puppeteer.Browser | null = null;
@@ -47,25 +26,31 @@ class ScraperService {
             await this.page.waitForSelector('h1[itemprop="name"]', { timeout: 5000 });
 
             return await this.page.evaluate(() => {
-                // Extract name and gender (which is inside the h1 small tag)
+                
                 const nameElement = document.querySelector('h1[itemprop="name"]');
-                const name = nameElement?.textContent?.replace(/for (men|women)$/i, '').trim() || '';
-                const gender = nameElement?.querySelector('small')?.textContent?.trim() || '';
+                const fullName = nameElement?.textContent?.trim() || '';    
+                const cleanName = fullName.replace(/\s*for (men|women|men and women|women and men)\s*$/i, '').trim();
+                
+                const genderText = nameElement?.querySelector('small')?.textContent?.trim().toLowerCase() || '';
+                let gender: 'men' | 'women' | 'unisex' | null = null;
+                if (genderText.includes('men') && genderText.includes('women')) {
+                    gender = 'unisex';
+                } else if (genderText.includes('men')) {
+                    gender = 'men';
+                } else if (genderText.includes('women')) {
+                    gender = 'women';
+                }
 
-                // Extract brand
                 const brandElement = document.querySelector('[itemprop="brand"] [itemprop="name"]');
                 const brand = brandElement?.textContent?.trim() || '';
 
-                // Extract image
                 const imageElement = document.querySelector('[itemprop="image"]');
                 const image = imageElement?.getAttribute('src') || '';
 
-                 // Rating data
                 const ratingElement = document.querySelector('[itemprop="aggregateRating"]');
                 const ratingValue = parseFloat(ratingElement?.querySelector('[itemprop="ratingValue"]')?.textContent || '0');
                 const ratingCount = parseInt(ratingElement?.querySelector('[itemprop="ratingCount"]')?.textContent?.replace(/,/g, '') || '0');
 
-                // Accords
                 const accordElements = Array.from(document.querySelectorAll('.accord-box .accord-bar'));
                 const accords = accordElements.map(el => ({
                     name: el.textContent?.trim() || '',
@@ -74,10 +59,8 @@ class ScraperService {
                     color: el.getAttribute('style')?.match(/color:\s*([^;]+)/)?.[1] || ''
                 }));
 
-                // Brand logo
                 const brandLogo = document.querySelector('[itemprop="brand"] [itemprop="logo"]')?.getAttribute('src') || '';
 
-                // Notes
                 const getNotes = (type: string) => {
                     const section = Array.from(document.querySelectorAll('h4')).find(h4 => 
                         h4.textContent?.toLowerCase().includes(type.toLowerCase())
@@ -93,7 +76,6 @@ class ScraperService {
                     }));
                 };
 
-                // Perfumers
                 const perfumerSection = Array.from(document.querySelectorAll('.strike-title')).find(el => 
                     el.textContent?.toLowerCase().includes('perfumer')
                 );
@@ -104,10 +86,10 @@ class ScraperService {
                     }))
                     : [];
                  return {
-                    name,
+                    name: cleanName,
                     brand,
                     image,
-                    gender: gender.toLowerCase(),
+                    gender,
                     rating: {
                         value: ratingValue,
                         count: ratingCount

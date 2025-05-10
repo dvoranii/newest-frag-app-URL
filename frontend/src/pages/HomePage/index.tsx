@@ -1,8 +1,11 @@
 
+import * as S from "./styles";
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { scrapeFragrance } from '../../services/api.service';
-import * as S from "./styles";
+import { cacheFragrance } from "../../services/cache.service";
+import FindMyFragLogo from "/assets/findmyfrag.png";
+
 
 const HomePage = () => {
     const [url, setUrl] = useState('');
@@ -16,21 +19,16 @@ const HomePage = () => {
     setIsLoading(true);
 
     try {
-        // This now makes an identical request to your curl example
+
         const fragranceData = await scrapeFragrance(url);
-        
-        // Debug log to verify identical response
-        console.log('Received:', fragranceData);
-        
+        cacheFragrance(fragranceData);     
         navigate('/fragrance', { state: { fragranceData } });
+
     } catch (err) {
         const message = err instanceof Error 
         ? err.message 
         : 'Failed to scrape fragrance';
         setError(message);
-        
-        // Debug log for errors
-        console.error('Scraping error:', err);
     } finally {
         setIsLoading(false);
     }
@@ -38,10 +36,13 @@ const HomePage = () => {
 
     return (
        <S.Container>
-            <S.Title>Fragrance Scraper</S.Title>
+            <S.FindMyFragImgWrapper>
+                 <img src={FindMyFragLogo} alt="" />
+            </S.FindMyFragImgWrapper>
+           
             <S.Form onSubmit={handleSubmit}>
                 <S.FormGroup>
-                    <S.Label htmlFor="url">Fragrantica Perfume URL</S.Label>
+                    <S.Label htmlFor="url">Enter a Fragrantica perfume URL:</S.Label>
                     <S.Input
                         type="url"
                         id="url"
@@ -57,7 +58,7 @@ const HomePage = () => {
                     disabled={isLoading}
                     $isLoading={isLoading}
                 >
-                    {isLoading ? 'Generating...' : 'Generate'}
+                    {isLoading ? 'Generating...' : 'Fetch Fragrance'}
                 </S.SubmitButton>
             </S.Form>
         </S.Container>
