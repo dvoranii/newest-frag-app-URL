@@ -85,7 +85,10 @@ export const summarizeFragranceReviews = async (req: Request, res: Response): Pr
         3. A concise summary of the general consensus
         4. Any notable contrasting opinions
         
-        Keep the summary under 200 words and avoid any markdown formatting.`;
+        Keep the summary under 200 words and avoid any markdown formatting. Also make sure to
+        understand when a fragrance is an original, and when it is a clone of another no matter 
+        how the reviews are phrased (i.e Creed Aventus is the original and club de nuit intense man by armaf is a clone)
+        `;
 
         const result = await model.generateContent({
             contents: [{role: "user", parts: [{text: prompt}]}],
