@@ -49,6 +49,7 @@ export const Input = styled.input<{$isInvalid?:boolean}>`
 export const FindMyFragImgWrapper = styled.div`
     width: 100%;
     display: flex;
+    padding-bottom: 2rem;
     justify-content: center;
     img {
         max-width: 450px;

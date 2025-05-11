@@ -25,3 +25,31 @@ export const scrapeFragrance = async (url: string) => {
     throw new Error(message);
   }
 };
+
+export const generateFragranceSummary = async (brand: string, name: string) => {
+    try {
+        const response = await fetch(`${BASE_URL}/api/fragrance/summary`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                brand,
+                name
+            }),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to generate fragrance summary');
+        }
+
+        const data = await response.json();
+        return data.summary;
+
+    } catch(error) {
+        const message = error instanceof Error ? error.message : "Network error when trying to generate summary.";
+        throw new Error(message);
+    }
+}

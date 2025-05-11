@@ -26,7 +26,8 @@ const HomePage = () => {
         }
         mutate(undefined, {
             onSuccess: (data) => {
-                navigate('/fragrance', {state: {fragranceData: data}});
+                const encoded = encodeURIComponent(JSON.stringify(data));
+                navigate(`/fragrance?data=${encoded}`);
                 setUrl('')
             }
         });

@@ -3,7 +3,27 @@ import styled from 'styled-components';
 export const Container = styled.div`
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0 2rem 2rem 2rem;
+`;
+
+export const HomeLinkContainer = styled.div`
+    width: fit-content;
+    
+    & > a {
+        display: inline-block;
+        color: #2563eb;
+        text-decoration: none;
+
+        & > img {
+            padding: 1rem 0 0 1rem;
+            max-width: 250px;
+            transition: all 150ms ease;
+
+            &:hover {
+                filter: brightness(1.1);
+            }
+        }
+    }
 `;
 
 export const ErrorContainer = styled.div`
@@ -349,4 +369,35 @@ export const PerfumerName = styled.span`
   margin-top: 0.5rem;
   color: #475569;
   text-align: center;
+`;
+
+export const SummarySection = styled.div`
+    margin-top: 2rem;
+    padding: 1rem;
+    border-top: 1px solid #eee;
+`;
+
+export const GenerateSummaryButton = styled.button`
+    padding: 0.75rem 1.5rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+        background-color: #367c39;
+    }
+
+    &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+`;
+
+export const SummaryText = styled.p`
+    margin-top: 1rem;
+    white-space: pre-line; /* Preserve line breaks from Gemini */
 `;

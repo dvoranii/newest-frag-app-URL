@@ -2,8 +2,6 @@
 import * as Puppeteer from "puppeteer";
 import { FragranceData } from "../types/fragrance";
 
-
-
 class ScraperService {
     private browser: Puppeteer.Browser | null = null;
     private page: Puppeteer.Page | null = null;

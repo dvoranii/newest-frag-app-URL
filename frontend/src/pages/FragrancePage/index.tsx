@@ -1,8 +1,10 @@
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import * as S from "./styles";
 import type { FragranceData } from '../../types/fragrance';
-import LoadingSpinner from '../../components/LoadingSpinner';
+import { getCachedFragrance, cacheFragrance } from '../../services/cache.service';
+import { generateFragranceSummary } from '../../services/api.service';
+import FindMyFragLogo from '/assets/findmyfrag.png';
 
 const renderRatingStars = (rating: number) => {
     const stars = [];
@@ -24,15 +26,58 @@ const renderRatingStars = (rating: number) => {
 
 const FragrancePage = () => {
     const location = useLocation();
+    const [searchParams] = useSearchParams();
     const [fragranceData, setFragranceData] = useState<FragranceData | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
+    const [isSummaryLoading, setIsSummaryLoading] = useState(false);
+    const [aiSummary, setAiSummary] = useState<string | null>(null);
+    
+    const navigate = useNavigate();
+
     useEffect(() => {
-        if (location.state?.fragranceData) {
+        const cachedData = getCachedFragrance();
+        if (cachedData) {
+            setFragranceData(cachedData);
+            setIsLoading(false);
+            return;
+        } 
+        const encoded = searchParams.get('data');
+        if (encoded) {
+            try {
+                const decodedData: FragranceData = JSON.parse(decodeURIComponent(encoded));
+                setFragranceData(decodedData);
+                cacheFragrance(decodedData);
+                setIsLoading(false);
+            } catch (error) {
+                console.error("Error decoding fragrance data from URL:", error);
+                navigate('/');
+
+            }
+        } else if (location.state?.fragranceData){
             setFragranceData(location.state.fragranceData);
+            cacheFragrance(location.state.fragranceData);
+            setIsLoading(false);
+        } else {
+            setIsLoading(false);
+            navigate('/');
         }
-        setIsLoading(false);
-    }, [location.state]);
+    }, [searchParams, navigate, location.state]);
+
+    const handleGenerateSummary = async () => {
+        if (fragranceData?.brand && fragranceData?.name) {
+            setIsSummaryLoading(true);
+            try {
+                const summary = await generateFragranceSummary(fragranceData.brand, fragranceData.name);
+                setAiSummary(summary);
+            } catch (error: any) {
+                console.error("Error generating summary:", error.message);
+                setAiSummary("Failed to generate summary.");
+            } finally {
+                setIsSummaryLoading(false);
+            }
+        }
+    };
 
     if (isLoading) {
         return (
@@ -52,7 +97,16 @@ const FragrancePage = () => {
     }
 
     return (
+        <>
+        <S.HomeLinkContainer>
+            <Link to="/">
+                <img src={FindMyFragLogo} alt="" />
+            </Link>
+        </S.HomeLinkContainer>
+
         <S.Container>
+
+            
             <S.Card>
                 <S.CardContent>
                     <S.MainContentContainer>
@@ -164,11 +218,7 @@ const FragrancePage = () => {
                                 )}
                             </S.NotesColumn>
                             )}
-                        </S.DetailsColumn>
-
-                        
-
-                        {/* Notes Column */}
+                        </S.DetailsColumn> 
                         
                     </S.MainContentContainer>
 
@@ -189,9 +239,17 @@ const FragrancePage = () => {
                             </S.PerfumersContainerInner>
                         </S.PerfumersContainer>
                     )}
+
+                    <S.SummarySection>
+                        <S.GenerateSummaryButton onClick={handleGenerateSummary} disabled={isSummaryLoading || aiSummary !== null}>
+                           {isSummaryLoading ? "Generating Summary..." : aiSummary ? "Summary Generated" : "Generate Fragrance Summary"} 
+                        </S.GenerateSummaryButton>
+                        {aiSummary && <S.SummaryText>{aiSummary}</S.SummaryText>}
+                    </S.SummarySection>
                 </S.CardContent>
             </S.Card>
         </S.Container>
+        </>
     );
 };
 
