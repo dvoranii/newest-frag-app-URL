@@ -3,8 +3,9 @@ import { useState, useEffect } from 'react';
 import * as S from "./styles";
 import type { FragranceData } from '../../types/fragrance';
 import { getCachedFragrance, cacheFragrance } from '../../services/cache.service';
-import { generateFragranceSummary } from '../../services/api.service';
+import { generateFragranceSummary, summarizeFragranceReviews } from '../../services/api.service';
 import FindMyFragLogo from '/assets/findmyfrag.png';
+import { getSavedFragranceUrl } from '../../utils/urlStorage';
 
 const renderRatingStars = (rating: number) => {
     const stars = [];
@@ -32,6 +33,9 @@ const FragrancePage = () => {
 
     const [isSummaryLoading, setIsSummaryLoading] = useState(false);
     const [aiSummary, setAiSummary] = useState<string | null>(null);
+
+    const [isReviewsLoading, setIsReviewsLoading] = useState(false);
+    const [reviewsSummary, setReviewsSummary] = useState<string | null>(null);
     
     const navigate = useNavigate();
 
@@ -78,6 +82,24 @@ const FragrancePage = () => {
             }
         }
     };
+
+    const handleSummarizeReviews = async () => {
+        if (fragranceData) {
+            setIsReviewsLoading(true);
+            try {
+                const url = getSavedFragranceUrl();
+                if (!url) throw new Error("Original URL not available");
+
+                const data = await summarizeFragranceReviews(url);
+                setReviewsSummary(data.summary);
+            } catch (error: any) {
+                console.error("Error summarizing reviews", error);
+                setReviewsSummary("Failed to generate reviews summary.");
+            } finally {
+                setIsReviewsLoading(false);
+            }
+        }
+    }
 
     if (isLoading) {
         return (
@@ -240,12 +262,40 @@ const FragrancePage = () => {
                         </S.PerfumersContainer>
                     )}
 
-                    <S.SummarySection>
+                    {/* <S.SummarySection>
                         <S.GenerateSummaryButton onClick={handleGenerateSummary} disabled={isSummaryLoading || aiSummary !== null}>
                            {isSummaryLoading ? "Generating Summary..." : aiSummary ? "Summary Generated" : "Generate Fragrance Summary"} 
                         </S.GenerateSummaryButton>
+                        
                         {aiSummary && <S.SummaryText>{aiSummary}</S.SummaryText>}
-                    </S.SummarySection>
+                    </S.SummarySection> */}
+
+                    <S.DualSummaryContainer>
+                        <S.SummarySection>
+                            <S.SummaryTitle>Fragrance Summary</S.SummaryTitle>
+                            <S.GenerateSummaryButton 
+                                onClick={handleGenerateSummary} 
+                                disabled={isSummaryLoading || aiSummary !== null}
+                                $variant="fragrance"
+                            >
+                                {isSummaryLoading ? "Generating..." : aiSummary ? "Summary Generated" : "Generate Fragrance Summary"} 
+                            </S.GenerateSummaryButton>
+                            {aiSummary && <S.SummaryText $variant='fragrance'>{aiSummary}</S.SummaryText>}
+                        </S.SummarySection>
+
+                        {/* Reviews Summary Section */}
+                        <S.SummarySection>
+                            <S.SummaryTitle>Reviews Analysis</S.SummaryTitle>
+                            <S.GenerateSummaryButton 
+                                onClick={handleSummarizeReviews} 
+                                disabled={isReviewsLoading || reviewsSummary !== null}
+                                $variant="reviews"
+                            >
+                                {isReviewsLoading ? "Analyzing..." : reviewsSummary ? "Analysis Complete" : "Summarize Reviews"} 
+                            </S.GenerateSummaryButton>
+                            {reviewsSummary && <S.SummaryText $variant='reviews'>{reviewsSummary}</S.SummaryText>}
+                        </S.SummarySection>
+                    </S.DualSummaryContainer>
                 </S.CardContent>
             </S.Card>
         </S.Container>

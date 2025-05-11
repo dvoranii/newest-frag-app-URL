@@ -42,7 +42,7 @@ export const generateFragranceSummary = async (req: Request, res: Response): Pro
             return;
         }
 
-        const prompt = `Please provide a nice summary of how "${name}" by ${brand} smells and the best occasions (time of year and time of day - i.e winter day or summer night, etc, situational context - i.e bar, club, office, etc). The summary should be no longer than 100 words. Also please avoid any formatting like using double asterisks for bolding text. It comes out as "**" literally and we do not want that. Just provide normal text.`;
+        const prompt = `Please provide a nice summary of how "${name}" by ${brand} smells and the best occasions (time of year and time of day - i.e winter day or summer night, etc, situational context - i.e bar, club, office, etc). I would also like you to explain how certain notes in the fragrance compliment each other and how. The summary should be no longer than 150 words. Also please avoid any formatting like using double asterisks for bolding text. It comes out as "**" literally and we do not want that. Just provide normal text.`;
         const result = await model.generateContent({
             contents: [{role: "user", parts: [{text: prompt}]}],
         });
@@ -59,3 +59,51 @@ export const generateFragranceSummary = async (req: Request, res: Response): Pro
         res.status(500).json({ error: 'Failed to generate fragrance summary.', details: error instanceof Error ? error.message : 'Unknown error' });
     }
 }
+
+// In fragrance.controller.ts
+export const summarizeFragranceReviews = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { url } = req.body;
+
+        if (!url) {
+            res.status(400).json({ error: 'URL is required' });
+            return;
+        }
+
+        await scraperService.initialize();
+        const reviews = await scraperService.scrapeFragranceReviews(url);
+        await scraperService.close();
+
+        // Generate summary using Gemini
+        const prompt = `Here are 10 recent reviews for this fragrance:
+        
+        ${reviews.map((r, i) => `Review ${i+1} (Rating: ${r.rating}/5): ${r.text}`).join('\n\n')}
+        
+        Please analyze these reviews and provide:
+        1. The overall sentiment breakdown (how many positive, negative, neutral)
+        2. Common themes mentioned
+        3. A concise summary of the general consensus
+        4. Any notable contrasting opinions
+        
+        Keep the summary under 200 words and avoid any markdown formatting.`;
+
+        const result = await model.generateContent({
+            contents: [{role: "user", parts: [{text: prompt}]}],
+        });
+        const response = result.response;
+        const summary = response.candidates?.[0]?.content?.parts?.[0]?.text || null;
+
+        if (summary) {
+            res.json({ reviews, summary });
+        } else {
+            res.status(500).json({ error: 'Failed to generate review summary' });
+        }
+
+    } catch (error) {
+        console.error('Review summary error:', error);
+        res.status(500).json({ 
+            error: 'Failed to summarize reviews',
+            details: error instanceof Error ? error.message : 'Unknown error'
+        });
+    }
+};

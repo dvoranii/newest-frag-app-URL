@@ -24,6 +24,9 @@ const HomePage = () => {
             setIsInputValid(false);
             return;
         }
+
+        localStorage.setItem('fragranceUrl', url);
+        
         mutate(undefined, {
             onSuccess: (data) => {
                 const encoded = encodeURIComponent(JSON.stringify(data));
