@@ -29,7 +29,15 @@ class ScraperService {
                 
                 const nameElement = document.querySelector('h1[itemprop="name"]');
                 const fullName = nameElement?.textContent?.trim() || '';    
-                const cleanName = fullName.replace(/\s*for (men|women|men and women|women and men)\s*$/i, '').trim();
+                
+                const brandElement = document.querySelector('[itemprop="brand"] [itemprop="name"]');
+                const brand = brandElement?.textContent?.trim() || '';
+
+                let cleanName = fullName
+                    .replace(/\s*for (men|women|men and women|women and men)\s*$/i, '')
+                    .replace(new RegExp(`\\s*${brand}\\s*`, 'i'), '')
+                    .replace(/\s{2,}/g, ' ') 
+                    .trim();
                 
                 const genderText = nameElement?.querySelector('small')?.textContent?.trim().toLowerCase() || '';
                 let gender: 'men' | 'women' | 'unisex' | null = null;
@@ -40,9 +48,6 @@ class ScraperService {
                 } else if (genderText.includes('women')) {
                     gender = 'women';
                 }
-
-                const brandElement = document.querySelector('[itemprop="brand"] [itemprop="name"]');
-                const brand = brandElement?.textContent?.trim() || '';
 
                 const imageElement = document.querySelector('[itemprop="image"]');
                 const image = imageElement?.getAttribute('src') || '';

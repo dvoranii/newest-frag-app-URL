@@ -2,6 +2,7 @@ import { useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import * as S from "./styles";
 import type { FragranceData } from '../../types/fragrance';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 const renderRatingStars = (rating: number) => {
     const stars = [];
@@ -83,54 +84,56 @@ const FragrancePage = () => {
                         </S.NameBrandGenderContainerInner>
                         </S.NameBrandGenderContainerOuter>
                         <S.DetailsColumn>
-                            <S.ImageColumn>
-                                <S.Image 
-                                    src={fragranceData.image} 
-                                    alt={fragranceData.name}
-                                />
-                                {fragranceData.brandLogo && (
-                                    <S.BrandLogo 
-                                        src={fragranceData.brandLogo} 
-                                        alt={fragranceData.brand}
+                            <S.ImageAndAccordsContainer>
+                                <S.ImageColumn>
+                                    <S.Image 
+                                        src={fragranceData.image} 
+                                        alt={fragranceData.name}
                                     />
-                                )}
-                        </S.ImageColumn>
+                                    {fragranceData.brandLogo && (
+                                        <S.BrandLogo 
+                                            src={fragranceData.brandLogo} 
+                                            alt={fragranceData.brand}
+                                        />
+                                    )}
+                                </S.ImageColumn>
 
-                        {fragranceData.accords && fragranceData.accords.length > 0 && (
-                            <S.AccordsColumn>
-                                <S.SectionTitle>Accords</S.SectionTitle>
-                                <S.AccordsGrid>
-                                    {fragranceData.accords.map((accord, index) => (
-                                        <S.AccordItem 
-                                            key={index}
-                                            $width={accord.width}
-                                            $background={accord.background}
-                                            $color={accord.color}
-                                        >
-                                            {accord.name}
-                                        </S.AccordItem>
-                                    ))}
-                                </S.AccordsGrid>
-                            </S.AccordsColumn>
-                        )}
-
-                        {fragranceData.notes && (
-                            <S.NotesColumn>
-                                <S.NotesSectionTitle >Note Breakdown</S.NotesSectionTitle >
-                                
-                                {fragranceData.notes.top.length > 0 && (
-                                    <>
-                                        <S.NoteType>Top Notes</S.NoteType>
-                                        <S.NotesGrid>
-                                            {fragranceData.notes.top.map((note, index) => (
-                                                <S.NoteItem key={`top-${index}`}>
-                                                    <S.NoteImage src={note.image} alt={note.name} />
-                                                    <S.NoteName>{note.name}</S.NoteName>
-                                                </S.NoteItem>
+                                {fragranceData.accords && fragranceData.accords.length > 0 && (
+                                    <S.AccordsColumn>
+                                        <S.SectionTitle>Accords</S.SectionTitle>
+                                        <S.AccordsGrid>
+                                            {fragranceData.accords.map((accord, index) => (
+                                                <S.AccordItem 
+                                                    key={index}
+                                                    $width={accord.width}
+                                                    $background={accord.background}
+                                                    $color={accord.color}
+                                                >
+                                                    {accord.name}
+                                                </S.AccordItem>
                                             ))}
-                                        </S.NotesGrid>
-                                    </>
+                                        </S.AccordsGrid>
+                                    </S.AccordsColumn>
                                 )}
+                            </S.ImageAndAccordsContainer>
+
+                                {fragranceData.notes && (
+                                    <S.NotesColumn>
+                                        <S.NotesSectionTitle >Note Breakdown</S.NotesSectionTitle >
+                                        
+                                        {fragranceData.notes.top.length > 0 && (
+                                            <>
+                                                <S.NoteType>Top Notes</S.NoteType>
+                                                <S.NotesGrid>
+                                                    {fragranceData.notes.top.map((note, index) => (
+                                                        <S.NoteItem key={`top-${index}`}>
+                                                            <S.NoteImage src={note.image} alt={note.name} />
+                                                            <S.NoteName>{note.name}</S.NoteName>
+                                                        </S.NoteItem>
+                                                    ))}
+                                                </S.NotesGrid>
+                                            </>
+                                        )}
 
                                 {fragranceData.notes.middle && fragranceData.notes.middle.length > 0 && (
                                     <>
@@ -160,7 +163,7 @@ const FragrancePage = () => {
                                     </> 
                                 )}
                             </S.NotesColumn>
-                        )}
+                            )}
                         </S.DetailsColumn>
 
                         

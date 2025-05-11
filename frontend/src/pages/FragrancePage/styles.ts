@@ -26,9 +26,11 @@ export const ErrorMessage = styled.p`
 export const Loading = styled.div`
   text-align: center;
   padding: 2rem;
+  font-family: sans-serif;
   font-size: 1.2rem;
   color: #64748b;
 `;
+
 
 export const Card = styled.div`
   background-color: white;
@@ -83,6 +85,10 @@ export const DetailsColumn = styled.div`
   display: flex;
   gap: 2rem;
   min-width: 250px;
+
+  @media screen and (max-width: 1111px) {
+    flex-direction: column;
+  }
 `;
 
 export const Brand = styled.div`
@@ -176,6 +182,7 @@ export const RatingCount = styled.span`
 export const AccordsColumn = styled.div`
   flex: 1;
   min-width: 250px;
+  max-width: 620px;
 `;
 
 export const SectionTitle = styled.h2`
@@ -207,9 +214,17 @@ export const AccordItem = styled.div<{ $width: string; $background: string; $col
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 `;
 
+export const ImageAndAccordsContainer = styled.div`
+  display:flex;
+
+  @media screen and (max-width: 670px) {
+  flex-direction: column;
+  }
+`;
+
 export const NotesColumn = styled.div`
   flex: 1;
-  min-width: 300px;
+  min-width: 33%;
   background-color:rgb(247, 247, 247);
   padding: 1rem;
   border-radius: 20px;
@@ -320,8 +335,9 @@ export const PerfumerItem = styled.div`
 `;
 
 export const PerfumerImage = styled.img`
-  width: 4rem;
-  height: 4rem;
+  width: 6rem;
+  height: 6rem;
+  filter: grayscale(100%);
   border-radius: 9999px;
   object-fit: cover;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -329,6 +345,7 @@ export const PerfumerImage = styled.img`
 
 export const PerfumerName = styled.span`
   font-size: 0.75rem;
+  font-family: sans-serif;
   margin-top: 0.5rem;
   color: #475569;
   text-align: center;

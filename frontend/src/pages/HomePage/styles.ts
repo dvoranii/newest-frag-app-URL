@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, {keyframes} from 'styled-components';
 
 export const Container = styled.div`
   max-width: 28rem;
@@ -24,18 +24,18 @@ export const FormGroup = styled.div`
   flex-direction: column;
 `;
 
-export const Label = styled.label`
-  font-size: 0.875rem;
-  font-weight: 500;
-  font-family: sans-serif;
-  color: #374151;
-  margin-bottom: 0.25rem;
-`;
+// export const Label = styled.label`
+//   font-size: 0.875rem;
+//   font-weight: 500;
+//   font-family: sans-serif;
+//   color: #374151;
+//   margin-bottom: 0.25rem;
+// `;
 
-export const Input = styled.input`
+export const Input = styled.input<{$isInvalid?:boolean}>`
   width: 92%;
   padding: 0.5rem 1rem;
-  border: 1px solid #d1d5db;
+ border: 1px solid ${({ $isInvalid }) => ($isInvalid ? '#ef4444' : '#d1d5db')};
   border-radius: 0.375rem;
   font-size: 1rem;
 
@@ -85,4 +85,15 @@ export const SubmitButton = styled.button<{ $isLoading: boolean }>`
     opacity: 0.7;
     cursor: not-allowed;
   }
+`;
+
+const spin = keyframes`
+    0% {transform: rotate(0deg);}
+    100% {transform: rotate(360deg);}
+`;
+
+export const LoadingSpinnerContainer = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: center;  
 `;
