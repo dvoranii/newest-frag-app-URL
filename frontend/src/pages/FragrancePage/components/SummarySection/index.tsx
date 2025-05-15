@@ -1,11 +1,15 @@
 import * as S from './styles';
 
 interface SummarySectionProps {
-    title: string;
-    onGenerate: () => void;
-    isLoading: boolean;
-    content: string | null;
-    variant: 'fragrance' | 'reviews';
+  title: string;
+  onGenerate: () => Promise<void>; 
+  isLoading: boolean;
+  content: string | null;
+  variant: 'fragrance' | 'reviews';
+  fragranceData?: { 
+    brand?: string;
+    name?: string;
+  };
 }
 
 const SummarySection = ({ 

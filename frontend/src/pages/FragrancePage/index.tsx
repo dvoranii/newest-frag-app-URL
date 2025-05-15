@@ -3,9 +3,8 @@ import { useState, useEffect } from 'react';
 import * as S from "./styles";
 import type { FragranceData } from '../../types/fragrance';
 import { getCachedFragrance, cacheFragrance } from '../../services/cache.service';
-import { generateFragranceSummary, summarizeFragranceReviews } from '../../services/api.service';
 import FindMyFragLogo from '/assets/findmyfrag.png';
-import { getSavedFragranceUrl } from '../../utils/urlStorage';
+import { useFragranceSummary } from '../../hooks/useFragranceSummaries';
 import FragranceHeader from './components/FragranceHeader';
 import FragranceImage from './components/FragranceImage';
 import AccordsDisplay from './components/AccordsDisplay';
@@ -19,14 +18,17 @@ const FragrancePage = () => {
     const [searchParams] = useSearchParams();
     const [fragranceData, setFragranceData] = useState<FragranceData | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-
-    const [isSummaryLoading, setIsSummaryLoading] = useState(false);
-    const [aiSummary, setAiSummary] = useState<string | null>(null);
-
-    const [isReviewsLoading, setIsReviewsLoading] = useState(false);
-    const [reviewsSummary, setReviewsSummary] = useState<string | null>(null);
     
     const navigate = useNavigate();
+
+      const {
+        isSummaryLoading,
+        aiSummary,
+        handleGenerateSummary,
+        isReviewsLoading,
+        reviewsSummary,
+        handleSummarizeReviews,
+    } = useFragranceSummary();
 
     useEffect(() => {
         const cachedData = getCachedFragrance();
@@ -57,38 +59,6 @@ const FragrancePage = () => {
         }
     }, [searchParams, navigate, location.state]);
 
-    const handleGenerateSummary = async () => {
-        if (fragranceData?.brand && fragranceData?.name) {
-            setIsSummaryLoading(true);
-            try {
-                const summary = await generateFragranceSummary(fragranceData.brand, fragranceData.name);
-                setAiSummary(summary);
-            } catch (error: any) {
-                console.error("Error generating summary:", error.message);
-                setAiSummary("Failed to generate summary.");
-            } finally {
-                setIsSummaryLoading(false);
-            }
-        }
-    };
-
-    const handleSummarizeReviews = async () => {
-        if (fragranceData) {
-            setIsReviewsLoading(true);
-            try {
-                const url = getSavedFragranceUrl();
-                if (!url) throw new Error("Original URL not available");
-
-                const data = await summarizeFragranceReviews(url);
-                setReviewsSummary(data.summary);
-            } catch (error: any) {
-                console.error("Error summarizing reviews", error);
-                setReviewsSummary("Failed to generate reviews summary.");
-            } finally {
-                setIsReviewsLoading(false);
-            }
-        }
-    }
 
     if (isLoading) {
         return (
@@ -144,7 +114,7 @@ const FragrancePage = () => {
                     <S.DualSummaryContainer>
                         <SummarySection
                                 title="Fragrance Summary"
-                                onGenerate={handleGenerateSummary}
+                                onGenerate={() => handleGenerateSummary(fragranceData.brand, fragranceData.name)}
                                 isLoading={isSummaryLoading}
                                 content={aiSummary}
                                 variant="fragrance"
