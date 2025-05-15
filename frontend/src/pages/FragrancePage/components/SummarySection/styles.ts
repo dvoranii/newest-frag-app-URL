@@ -2,6 +2,7 @@ import { styled } from "styled-components";
 
 interface SummaryTextProps {
   $variant?: 'reviews' | 'fragrance';
+  $isTyping?: boolean;
 }
 
 interface GenerateSummaryButtonProps {
@@ -42,6 +43,8 @@ export const SummaryText = styled.div<SummaryTextProps>`
   line-height: 1.6;
   white-space: pre-line;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  min-height: 100px; /* Prevent layout shift */
+
 `;
 
 export const GenerateSummaryButton = styled.button<GenerateSummaryButtonProps>`

@@ -1,6 +1,7 @@
 import * as S from './styles';
 import LoadingSpinner from '../../../../components/LoadingSpinner';
 import ToolTip from '../../../../components/Tooltip';
+import { useTypewriter } from '../../../../hooks/useTypewriter';
 
 interface SummarySectionProps {
   title: string;
@@ -21,6 +22,9 @@ const SummarySection = ({
     content, 
     variant 
 }: SummarySectionProps) => {
+
+    const {displayedText, isTyping} = useTypewriter(content || '', 15);
+
     const getButtonText = () => {
         if (isLoading) return variant === 'fragrance' ? "Generating..." : "Analyzing...";
         if (content) return variant === 'fragrance' ? "Summary Generated" : "Analysis Complete";
@@ -65,7 +69,14 @@ const SummarySection = ({
                     )}
                 </S.LoadingContainer>
             )}
-            {content && <S.SummaryText $variant={variant}>{content}</S.SummaryText>}
+            {content && (
+            <S.SummaryText 
+                $variant={variant}
+                $isTyping={isTyping} // Pass the typing state
+            >
+                {displayedText}
+            </S.SummaryText>
+            )}
         </S.SummarySection>
     );
 };
