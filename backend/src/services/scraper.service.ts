@@ -64,19 +64,57 @@ class ScraperService {
 
                 const brandLogo = document.querySelector('[itemprop="brand"] [itemprop="logo"]')?.getAttribute('src') || '';
 
-                const getNotes = (type: string) => {
-                    const section = Array.from(document.querySelectorAll('h4')).find(h4 => 
-                        h4.textContent?.toLowerCase().includes(type.toLowerCase())
+                const getNotesStructure = () => {
+                    const pyramidDiv = document.getElementById('pyramid');
+                    if (!pyramidDiv) return {
+                        top: [],
+                        middle: [],
+                        base: []
+                    };
+                    
+                    // Check if we have section headers
+                    const hasSections = Array.from(pyramidDiv.querySelectorAll('h4')).some(h4 => 
+                        h4.textContent?.toLowerCase().includes('top') ||
+                        h4.textContent?.toLowerCase().includes('middle') ||
+                        h4.textContent?.toLowerCase().includes('base')
                     );
-                    if (!section) return [];
                     
-                    const notesContainer = section.nextElementSibling?.querySelector('div[style*="flex"]');
-                    if (!notesContainer) return [];
-                    
-                    return Array.from(notesContainer.querySelectorAll('div[style*="flex-direction: column"]')).map(note => ({
-                        name: note.textContent?.trim() || '',
-                        image: note.querySelector('img')?.getAttribute('src') || ''
-                    }));
+                    if (hasSections) {
+                        // Process as structured notes
+                        const getSectionNotes = (type: string) => {
+                            const section = Array.from(pyramidDiv.querySelectorAll('h4')).find(h4 => 
+                                h4.textContent?.toLowerCase().includes(type.toLowerCase())
+                            );
+                            if (!section) return [];
+                            
+                            const notesContainer = section.nextElementSibling?.querySelector('div[style*="flex"]');
+                            if (!notesContainer) return [];
+                            
+                            return Array.from(notesContainer.querySelectorAll('div[style*="flex-direction: column"]')).map(note => ({
+                                name: note.textContent?.trim() || '',
+                                image: note.querySelector('img')?.getAttribute('src') || ''
+                            }));
+                        };
+                        
+                        return {
+                            top: getSectionNotes('top'),
+                            middle: getSectionNotes('middle'),
+                            base: getSectionNotes('base')
+                        };
+                    } else {
+                        // Process as unified notes
+                        const noteElements = pyramidDiv.querySelectorAll('div[style*="margin: 0.2rem; display: flex; justify-content: center; flex-direction: column"]');
+                        const allNotes = Array.from(noteElements).map(note => ({
+                            name: note.textContent?.trim() || '',
+                            image: note.querySelector('img')?.getAttribute('src') || ''
+                        }));
+                        
+                        return {
+                            top: allNotes,
+                            middle: [],
+                            base: []
+                        };
+                    }
                 };
 
                 const perfumerSection = Array.from(document.querySelectorAll('.strike-title')).find(el => 
@@ -99,11 +137,7 @@ class ScraperService {
                     },
                     accords,
                     brandLogo,
-                    notes: {
-                        top: getNotes('top'),
-                        middle: getNotes('middle'),
-                        base: getNotes('base')
-                    },
+                    notes: getNotesStructure(),
                     perfumers
                 };
             });
