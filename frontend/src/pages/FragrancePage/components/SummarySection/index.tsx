@@ -1,4 +1,6 @@
 import * as S from './styles';
+import LoadingSpinner from '../../../../components/LoadingSpinner';
+import ToolTip from '../../../../components/Tooltip';
 
 interface SummarySectionProps {
   title: string;
@@ -27,7 +29,26 @@ const SummarySection = ({
 
     return (
         <S.SummarySection>
-            <S.SummaryTitle>{title}</S.SummaryTitle>
+            <S.TitleContainer>
+                <S.SummaryTitle>{title}</S.SummaryTitle>
+                {variant === 'reviews' && (
+                    <ToolTip
+                        content="We analyze the 10 most recent reviews to identify common themes and sentiments.This may take a few seconds."
+                        position="right"
+                    />
+                )}
+            </S.TitleContainer>
+                {variant === 'reviews' && (
+                    <S.Disclaimer as="small" role="note">
+                        Note: Fragrance preferences are highly personal. For the most accurate impression, we recommend testing the scent yourself.
+                    </S.Disclaimer>
+                )} 
+                {variant === 'fragrance' && (
+                    <S.Disclaimer as="small" role="note">
+                         This AI generated summary analyzes how the notes combine, the mood they create, and ideal wearing occasions. Remember: Your personal experience may vary
+                    </S.Disclaimer>
+                )} 
+          
             <S.GenerateSummaryButton 
                 onClick={onGenerate} 
                 disabled={isLoading || content !== null}
@@ -35,6 +56,15 @@ const SummarySection = ({
             >
                 {getButtonText()}
             </S.GenerateSummaryButton>
+
+            {isLoading && (
+                <S.LoadingContainer>
+                    <LoadingSpinner/>
+                    {variant === 'reviews' && (
+                        <S.LoadingText>Gathering the 10 most recent reviews...</S.LoadingText>
+                    )}
+                </S.LoadingContainer>
+            )}
             {content && <S.SummaryText $variant={variant}>{content}</S.SummaryText>}
         </S.SummarySection>
     );

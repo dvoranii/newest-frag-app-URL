@@ -113,14 +113,14 @@ const FragrancePage = () => {
 
                     <S.DualSummaryContainer>
                         <SummarySection
-                                title="Fragrance Summary"
+                                title="AI Fragrance Summary"
                                 onGenerate={() => handleGenerateSummary(fragranceData.brand, fragranceData.name)}
                                 isLoading={isSummaryLoading}
                                 content={aiSummary}
                                 variant="fragrance"
                             />
                             <SummarySection
-                                title="Reviews Analysis"
+                                title="AI Reviews Analysis"
                                 onGenerate={handleSummarizeReviews}
                                 isLoading={isReviewsLoading}
                                 content={reviewsSummary}

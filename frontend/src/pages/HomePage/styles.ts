@@ -97,3 +97,20 @@ export const LoadingSpinnerContainer = styled.div`
     display: flex;
     justify-content: center;  
 `;
+
+export const LoadingContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+`;
+
+export const LoadingText = styled.p`
+  color: black;
+  font-size: 0.9rem;
+  text-align: center;
+  margin: 0;
+  opacity: 0.8;
+  max-width: 80%;
+`;

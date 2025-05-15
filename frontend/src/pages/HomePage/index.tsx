@@ -71,9 +71,10 @@ const HomePage = () => {
                 
                 {error && <S.ErrorText>{error.message}</S.ErrorText>}
                  {isPending && (
-                  <S.LoadingSpinnerContainer>
-                        <LoadingSpinner/>
-                  </S.LoadingSpinnerContainer>
+                <S.LoadingContainer>
+                    <LoadingSpinner />
+                    <S.LoadingText>Please wait while we generate your fragrance profile...</S.LoadingText>
+                </S.LoadingContainer>
 
                 )}
             </S.Form>

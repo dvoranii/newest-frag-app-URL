@@ -4,14 +4,14 @@ export const Brand = styled.div`
   text-transform: uppercase;
   font-family: sans-serif;
   letter-spacing: 0.05em;
-  font-size: 0.875rem;
+  font-size: 1.2rem;
   color: #4f46e5;
   font-weight: 600;
   margin-bottom: 0.5rem;
 `;
 
 export const Name = styled.h1`
-  font-size: 1.75rem;
+  font-size: 2.25rem;
   font-family: sans-serif;
   font-weight: 600;
   color: #1e293b;
@@ -66,7 +66,7 @@ export const RatingContainer = styled.div`
 `;
 
 export const RatingValue = styled.span`
-  font-size: 1.5rem;
+  font-size: 2.25rem;
   font-family: sans-serif;
   font-weight: bold;
   color: #1e293b;
@@ -74,6 +74,6 @@ export const RatingValue = styled.span`
 
 export const RatingCount = styled.span`
   color: #64748b;
-  font-size: 0.875rem;
+  font-size: 1.275rem;
   font-family: sans-serif;
 `;
