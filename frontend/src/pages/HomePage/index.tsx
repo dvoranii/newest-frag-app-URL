@@ -26,7 +26,7 @@ const HomePage = () => {
         }
 
         localStorage.setItem('fragranceUrl', url);
-        
+
         mutate(undefined, {
             onSuccess: (data) => {
                 const encoded = encodeURIComponent(JSON.stringify(data));
@@ -41,7 +41,11 @@ const HomePage = () => {
             <S.FindMyFragImgWrapper>
                  <img src={FindMyFragLogo} alt="" />
             </S.FindMyFragImgWrapper>
-           
+ 
+             <S.Tagline>
+                Paste your Fragrantica URL below to get an organized fragrance breakdown and AI-powered analysis!            
+            </S.Tagline>
+
             <S.Form onSubmit={handleSubmit}>
                 <S.FormGroup>
                     
@@ -56,15 +60,16 @@ const HomePage = () => {
                     />
                     {!isInputValid && <S.ErrorText>Please enter a valid Fragrantica URL</S.ErrorText>}
                 </S.FormGroup>
+
+                    <S.SubmitButton
+                        type="submit"
+                        disabled={isPending}
+                        $isLoading={isPending}
+                        >
+                        {isPending ? 'Generating...' : "Generate Fragrance Breakdown"}
+                    </S.SubmitButton> 
                 
                 {error && <S.ErrorText>{error.message}</S.ErrorText>}
-                <S.SubmitButton
-                    type="submit"
-                    disabled={isPending}
-                    $isLoading={isPending}
-                >
-                    {isPending ? 'Generating...' : "Generate Fragrance Breakdown"}
-                </S.SubmitButton>
                  {isPending && (
                   <S.LoadingSpinnerContainer>
                         <LoadingSpinner/>
@@ -72,6 +77,7 @@ const HomePage = () => {
 
                 )}
             </S.Form>
+
         </S.Container>
     );
 };

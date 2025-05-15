@@ -1,7 +1,7 @@
-import styled, {keyframes} from 'styled-components';
+import styled from 'styled-components';
 
 export const Container = styled.div`
-  max-width: 28rem;
+  max-width: 33rem;
   margin: 120px auto;
   padding: 1rem;
 `;
@@ -24,20 +24,21 @@ export const FormGroup = styled.div`
   flex-direction: column;
 `;
 
-// export const Label = styled.label`
-//   font-size: 0.875rem;
-//   font-weight: 500;
-//   font-family: sans-serif;
-//   color: #374151;
-//   margin-bottom: 0.25rem;
-// `;
+export const Tagline = styled.p`
+    margin: 1rem 0 0.5rem;
+    color: black;
+    font-size: 1.2rem;
+    font-family: Montserrat, sans-serif;
+    text-align: center;
+`;
 
 export const Input = styled.input<{$isInvalid?:boolean}>`
-  width: 92%;
+  max-width: 33rem;
   padding: 0.5rem 1rem;
- border: 1px solid ${({ $isInvalid }) => ($isInvalid ? '#ef4444' : '#d1d5db')};
-  border-radius: 0.375rem;
-  font-size: 1rem;
+  border: 1px solid ${({ $isInvalid }) => ($isInvalid ? '#ef4444' : '#d1d5db')};
+  font-size: 0.9rem;
+  margin-top: 1rem;
+  font-family: Inter, sans-serif;
 
   &:focus {
     outline: none;
@@ -49,10 +50,11 @@ export const Input = styled.input<{$isInvalid?:boolean}>`
 export const FindMyFragImgWrapper = styled.div`
     width: 100%;
     display: flex;
-    padding-bottom: 2rem;
+    padding-bottom: 1rem;
     justify-content: center;
+
     img {
-        max-width: 450px;
+        max-width: 550px;
     }
 `;
 
@@ -63,13 +65,14 @@ export const ErrorText = styled.p`
 
 export const SubmitButton = styled.button<{ $isLoading: boolean }>`
   width: 100%;
-  padding: 0.5rem 1rem;
+  padding: 1rem;
   background-color: #2563eb;
   color: white;
   border: none;
   border-radius: 0.375rem;
   font-size: 1rem;
   font-weight: 500;
+  font-family: Montserrat, sans-serif;
   cursor: pointer;
   transition: background-color 0.2s;
 
@@ -88,10 +91,6 @@ export const SubmitButton = styled.button<{ $isLoading: boolean }>`
   }
 `;
 
-const spin = keyframes`
-    0% {transform: rotate(0deg);}
-    100% {transform: rotate(360deg);}
-`;
 
 export const LoadingSpinnerContainer = styled.div`
     width: 100%;
