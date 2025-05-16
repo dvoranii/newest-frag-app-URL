@@ -63,33 +63,65 @@ export const ErrorText = styled.p`
   font-size: 0.875rem;
 `;
 
-export const SubmitButton = styled.button<{ $isLoading: boolean }>`
+export const SubmitButtonWrapper = styled.div`
   width: 100%;
+  display: flex;
+  justify-content: center;
+`;
+export const SubmitButton = styled.button<{ $isLoading: boolean }>`
+  position: relative;
+  z-index:1;
+  cursor: pointer;
+  width: fit-content;
   padding: 1rem;
+  background: transparent;
   background-color: #2563eb;
-  color: white;
+  color: #ffffff;
   border: none;
   border-radius: 0.375rem;
   font-size: 1rem;
   font-weight: 500;
   font-family: Montserrat, sans-serif;
-  cursor: pointer;
-  transition: background-color 0.2s;
+
+  transition: all 0.3s ease;
+
+
+  &::after {
+    position: absolute;
+    content: "";
+    width: 100%;
+    height: 0;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    border-radius: 5px;
+    background-color: #64d7d6;
+    background-image: linear-gradient(315deg, #64d7d6 0%,rgb(116, 230, 228) 74%);
+    box-shadow:inset 2px 2px 2px 0px rgba(255,255,255,.5);
+    7px 7px 20px 0px rgba(0,0,0,.1),
+    4px 4px 5px 0px rgba(0,0,0,.1);
+    transition: all 0.3s ease;
+  }
 
   &:hover {
-    background-color: #1d4ed8;
+    // background-color: #1d4ed8;
+    color: #000;
+
+    &:after {
+      top: auto;
+      bottom: 0;
+      height: 100%;
+    }
+
+    &:active {
+      top: 2px;
+    }
   }
 
-  &:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
-  }
 
-  &:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
 `;
+
+
 
 
 export const LoadingSpinnerContainer = styled.div`

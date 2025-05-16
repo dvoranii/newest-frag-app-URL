@@ -61,6 +61,8 @@ const HomePage = () => {
                     {!isInputValid && <S.ErrorText>Please enter a valid Fragrantica URL</S.ErrorText>}
                 </S.FormGroup>
 
+                <S.SubmitButtonWrapper>
+
                     <S.SubmitButton
                         type="submit"
                         disabled={isPending}
@@ -68,6 +70,7 @@ const HomePage = () => {
                         >
                         {isPending ? 'Generating...' : "Generate Fragrance Breakdown"}
                     </S.SubmitButton> 
+                </S.SubmitButtonWrapper>
                 
                 {error && <S.ErrorText>{error.message}</S.ErrorText>}
                  {isPending && (
