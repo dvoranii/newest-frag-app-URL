@@ -72,7 +72,6 @@ class ScraperService {
                         base: []
                     };
                     
-                    // Check if we have section headers
                     const hasSections = Array.from(pyramidDiv.querySelectorAll('h4')).some(h4 => 
                         h4.textContent?.toLowerCase().includes('top') ||
                         h4.textContent?.toLowerCase().includes('middle') ||

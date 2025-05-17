@@ -72,17 +72,19 @@ export const SubmitButton = styled.button<{ $isLoading: boolean }>`
   position: relative;
   z-index:1;
   cursor: pointer;
-  width: fit-content;
+  width: 70%;
   padding: 1rem;
   background: transparent;
-  background-color: #2563eb;
-  color: #ffffff;
   border: none;
-  border-radius: 0.375rem;
-  font-size: 1rem;
+  border-radius: 0.475rem;
+  font-size: 1.2rem;
   font-weight: 500;
   font-family: Montserrat, sans-serif;
-
+  background-color: #2563eb;
+  color: #ffffff;
+  box-shadow:inset 2px 2px 2px 0px rgba(255,255,255,.5);
+  7px 7px 20px 0px rgba(0,0,0,.1),
+  4px 4px 5px 0px rgba(0,0,0,.1);
   transition: all 0.3s ease;
 
 
@@ -96,7 +98,8 @@ export const SubmitButton = styled.button<{ $isLoading: boolean }>`
     z-index: -1;
     border-radius: 5px;
     background-color: #64d7d6;
-    background-image: linear-gradient(315deg, #64d7d6 0%,rgb(116, 230, 228) 74%);
+
+    background-image: linear-gradient(315deg, #64d7d6 0%,rgb(117, 234, 232));
     box-shadow:inset 2px 2px 2px 0px rgba(255,255,255,.5);
     7px 7px 20px 0px rgba(0,0,0,.1),
     4px 4px 5px 0px rgba(0,0,0,.1);
@@ -104,8 +107,8 @@ export const SubmitButton = styled.button<{ $isLoading: boolean }>`
   }
 
   &:hover {
-    // background-color: #1d4ed8;
-    color: #000;
+    color: #333;
+
 
     &:after {
       top: auto;
@@ -116,6 +119,14 @@ export const SubmitButton = styled.button<{ $isLoading: boolean }>`
     &:active {
       top: 2px;
     }
+
+  }
+
+    &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    background-color: #cccccc; 
+    pointer-events: none;
   }
 
 

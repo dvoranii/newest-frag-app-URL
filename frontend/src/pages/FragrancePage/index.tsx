@@ -22,13 +22,15 @@ const FragrancePage = () => {
     const navigate = useNavigate();
 
       const {
+        
         isSummaryLoading,
         aiSummary,
         handleGenerateSummary,
         isReviewsLoading,
         reviewsSummary,
         handleSummarizeReviews,
-    } = useFragranceSummary();
+
+        } = useFragranceSummary();
 
     useEffect(() => {
         const cachedData = getCachedFragrance();

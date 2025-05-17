@@ -60,7 +60,6 @@ export const generateFragranceSummary = async (req: Request, res: Response): Pro
     }
 }
 
-// In fragrance.controller.ts
 export const summarizeFragranceReviews = async (req: Request, res: Response): Promise<void> => {
     try {
         const { url } = req.body;
@@ -74,7 +73,6 @@ export const summarizeFragranceReviews = async (req: Request, res: Response): Pr
         const reviews = await scraperService.scrapeFragranceReviews(url);
         await scraperService.close();
 
-        // Generate summary using Gemini
         const prompt = `Here are 10 recent reviews for this fragrance:
         
         ${reviews.map((r, i) => `Review ${i+1} (Rating: ${r.rating}/5): ${r.text}`).join('\n\n')}
